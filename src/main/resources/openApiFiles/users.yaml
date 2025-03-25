@@ -1,0 +1,110 @@
+openapi: 3.1.0
+info:
+  title: Users Management Demo - OpenAPI 3.1
+  description: |-
+    This is a sample User Managemnt Server based on the OpenAPI 3.1 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    Some useful links:
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: '1.0.11'
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8080
+paths:
+  /users:
+    get:
+      tags:
+        - user
+      summary: Finds users
+      description: Get all users
+      operationId: getUsers
+      responses:
+        '200':
+           description: successful operation
+           content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UserResponse'
+              application/xml:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid tag value
+  /user:
+    post:
+      tags:
+        - user
+      summary: Save new user
+      description: Save new user
+      operationId: saveUser
+      requestBody:
+        description: Create new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      responses:
+        '200':
+            description: succesful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/UserResponse'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/UserResponse'
+        '400':
+           description: Invalid tag value
+components:
+# Descriptions of common components
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        nif:
+          type: string
+          examples: ['00000000T']
+        nombre:
+          type: string
+          examples: ['juan']
+      xml:
+        name: UserResponse
+    UserRequest:
+      required:
+        - name
+        - nif
+        - email
+      type: object
+      properties:
+        name:
+          type: string
+          examples: [Juan]
+        nif:
+          type: string
+          examples: [00000000T]
+        email:
+          type: string
+          examples: [email@email.es]
+      xml:
+        name: UserRequest
+        
+        
