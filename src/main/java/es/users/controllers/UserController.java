@@ -1,5 +1,7 @@
 package es.users.controllers;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,20 @@ public class UserController implements UserApiDelegate {
             case MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE -> {
                 UserResponse userResponse = userservice.createUser(userRequest);
                 yield new ResponseEntity<>(userResponse, HttpStatus.OK);
+            }
+            default -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_ACCEPTABLE);
+        };
+    }
+
+
+    @Override
+    public ResponseEntity<UserResponse> getUserById(Long userId) {
+        String acceptStr = request.getHeader(Constants.ACCEPT_STRING);
+        return switch (acceptStr) {
+            case MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE -> {
+                Optional<UserResponse> userResponse = userservice.getUserById(userId);
+                yield userResponse.map(usr -> new ResponseEntity<>(usr, HttpStatus.OK))
+                        .orElseGet(() -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_FOUND));
             }
             default -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_ACCEPTABLE);
         };

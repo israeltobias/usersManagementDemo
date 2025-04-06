@@ -2,6 +2,7 @@ package es.users.services.implementations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -49,5 +50,16 @@ public class UserService implements IUserService {
         userResponse.setNif(userRequest.getNif());
         userResponse.setNombre(userRequest.getName());
         return userResponse;
+    }
+
+
+    @Override
+    public Optional<UserResponse> getUserById(Long userId) {
+        return userRepository.findById(userId).map(user -> {
+            UserResponse userResponse = new UserResponse();
+            userResponse.setNif(user.getNif());
+            userResponse.setNombre(user.getName());
+            return userResponse;
+        });
     }
 }
