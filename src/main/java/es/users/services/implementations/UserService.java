@@ -31,8 +31,10 @@ public class UserService implements IUserService {
         List<UserResponse> usersResponse = new ArrayList<>();
         users.forEach(item -> {
             UserResponse userResponse = new UserResponse();
+            userResponse.setId(item.getId());
             userResponse.setNif(item.getNif());
             userResponse.setNombre(item.getName());
+            userResponse.setEmail(item.getEmail());
             usersResponse.add(userResponse);
         });
         return usersResponse;
@@ -45,10 +47,12 @@ public class UserService implements IUserService {
         user.setEmail(userRequest.getEmail());
         user.setName(userRequest.getName());
         user.setNif(userRequest.getNif());
-        userRepository.save(user);
+        User userSaved = userRepository.save(user);
         UserResponse userResponse = new UserResponse();
-        userResponse.setNif(userRequest.getNif());
-        userResponse.setNombre(userRequest.getName());
+        userResponse.setId(userSaved.getId());
+        userResponse.setNif(userSaved.getNif());
+        userResponse.setNombre(userSaved.getName());
+        userResponse.setEmail(userSaved.getEmail());
         return userResponse;
     }
 
@@ -57,8 +61,27 @@ public class UserService implements IUserService {
     public Optional<UserResponse> getUserById(Long userId) {
         return userRepository.findById(userId).map(user -> {
             UserResponse userResponse = new UserResponse();
+            userResponse.setId(user.getId());
             userResponse.setNif(user.getNif());
             userResponse.setNombre(user.getName());
+            userResponse.setEmail(user.getEmail());
+            return userResponse;
+        });
+    }
+
+
+    @Override
+    public Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest) {
+        return userRepository.findByNif(nif).map(user -> {
+            UserResponse userResponse = new UserResponse();
+            user.setName(userRequest.getName());
+            user.setNif(userRequest.getNif());
+            user.setEmail(userRequest.getEmail());
+            User userSaved = userRepository.save(user);
+            userResponse.setId(userSaved.getId());
+            userResponse.setNif(userSaved.getNif());
+            userResponse.setNombre(userSaved.getName());
+            userResponse.setEmail(userSaved.getEmail());
             return userResponse;
         });
     }

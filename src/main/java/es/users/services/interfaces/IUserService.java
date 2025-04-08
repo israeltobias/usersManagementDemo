@@ -15,4 +15,7 @@ public interface IUserService {
 
 
     Optional<UserResponse> getUserById(Long userId);
+
+
+    Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest);
 }

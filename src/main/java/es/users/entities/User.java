@@ -23,7 +23,6 @@ public class User {
     private String name;
     @Email(message = "El correo debe ser válido")
     @NotBlank(message = "El correo no puede estar vacío")
-    @Email
     private String email;
 
     public User() {
