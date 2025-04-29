@@ -21,12 +21,12 @@ import jakarta.validation.Valid;
 public class UserController implements UserApiDelegate {
 
     private final HttpServletRequest request;
-    private final UserService        userservice;
+    private final UserService        userService;
 
     public UserController(HttpServletRequest request, UserService userservice) {
         super();
         this.request = request;
-        this.userservice = userservice;
+        this.userService = userservice;
     }
 
 
@@ -35,7 +35,7 @@ public class UserController implements UserApiDelegate {
         String acceptStr = request.getHeader(Constants.ACCEPT_STRING);
         return switch (acceptStr) {
             case MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE -> {
-                UserResponse userResponse = userservice.createUser(userRequest);
+                UserResponse userResponse = userService.createUser(userRequest);
                 yield new ResponseEntity<>(userResponse, HttpStatus.OK);
             }
             default -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_ACCEPTABLE);
@@ -48,7 +48,7 @@ public class UserController implements UserApiDelegate {
         String acceptStr = request.getHeader(Constants.ACCEPT_STRING);
         return switch (acceptStr) {
             case MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE -> {
-                Optional<UserResponse> userResponse = userservice.getUserById(userId);
+                Optional<UserResponse> userResponse = userService.getUserById(userId);
                 yield userResponse.map(usr -> new ResponseEntity<>(usr, HttpStatus.OK))
                         .orElseGet(() -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_FOUND));
             }
@@ -58,14 +58,29 @@ public class UserController implements UserApiDelegate {
 
 
     @Override
-    public ResponseEntity<UserResponse> updateUserNif(@PathVariable("nif") String nif,
+    public ResponseEntity<UserResponse> updateUserByNif(@PathVariable("nif") String nif,
             @Valid @RequestBody UserRequest userRequest) {
         String acceptStr = request.getHeader(Constants.ACCEPT_STRING);
         return switch (acceptStr) {
             case MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE -> {
-                Optional<UserResponse> userResponse = userservice.updateUserNif(nif, userRequest);
+                Optional<UserResponse> userResponse = userService.updateUserNif(nif, userRequest);
                 yield userResponse.map(usr -> new ResponseEntity<>(usr, HttpStatus.OK))
                         .orElseGet(() -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_FOUND));
+            }
+            default -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_ACCEPTABLE);
+        };
+    }
+
+
+    @Override
+    public ResponseEntity<UserResponse> deleteUserByNif(@PathVariable("nif") String nif) {
+        String acceptStr = request.getHeader(Constants.ACCEPT_STRING);
+        return switch (acceptStr) {
+            case MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE -> {
+                if (userService.deleteUserByNif(nif)) {
+                    yield new ResponseEntity<>(new UserResponse(), HttpStatus.NO_CONTENT);
+                }
+                yield new ResponseEntity<>(new UserResponse(), HttpStatus.BAD_REQUEST);
             }
             default -> new ResponseEntity<>(new UserResponse(), HttpStatus.NOT_ACCEPTABLE);
         };

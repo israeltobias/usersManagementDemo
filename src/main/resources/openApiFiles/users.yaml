@@ -106,7 +106,7 @@ paths:
         - user
       summary: Update user 
       description: Update an exisitng user by nif
-      operationId: updateUserNif
+      operationId: updateUserByNif
       parameters:
         - name: nif
           in: path
@@ -115,7 +115,7 @@ paths:
           schema:
              type: string
       requestBody:
-        description: Update an exisitng user by nif
+        description: Updated user
         content:
           application/json:
              schema:
@@ -136,6 +136,33 @@ paths:
                  $ref: '#/components/schemas/UserResponse'
         '400':
           description: Invalid tag value
+    delete:
+        tags: 
+          - user
+        summary: Delete user
+        description: Delete user by nif
+        operationId: deleteUserByNif
+        parameters:
+          - name: nif
+            in: path
+            description: nif to delete user
+            required: true
+            schema:
+              type: string
+        responses:
+         '200':
+            description: succesful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/UserResponse'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/UserResponse'
+         '204':
+            description: succesful operation
+         '400':
+            description: Invalid tag value
 components:
 # Descriptions of common components
   schemas:

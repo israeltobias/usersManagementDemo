@@ -10,6 +10,8 @@ import es.users.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // @Query("SELECT u FROM User u WHERE u.nif= ?1")
     Optional<User> findByNif(String nif);
+
+
+    int deleteByNif(String nif);
 }

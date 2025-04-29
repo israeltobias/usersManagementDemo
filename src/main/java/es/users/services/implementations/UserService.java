@@ -85,4 +85,11 @@ public class UserService implements IUserService {
             return userResponse;
         });
     }
+
+
+    @Override
+    public boolean deleteUserByNif(String nif) {
+        int deleteUser = userRepository.deleteByNif(nif);
+        return deleteUser != 0;
+    }
 }

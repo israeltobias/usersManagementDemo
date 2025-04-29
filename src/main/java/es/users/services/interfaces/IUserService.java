@@ -18,4 +18,7 @@ public interface IUserService {
 
 
     Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest);
+
+
+    boolean deleteUserByNif(String nif);
 }
