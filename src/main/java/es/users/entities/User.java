@@ -17,12 +17,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long   id;
-    @NotBlank(message = "El nif no puede estar vacío")
+    @NotBlank(message = "NIF cannot be empty")
     private String nif;
-    @NotBlank(message = "El nombre no puede estar vacío")
+    @NotBlank(message = "nombre cannot be empty")
     private String name;
-    @Email(message = "El correo debe ser válido")
-    @NotBlank(message = "El correo no puede estar vacío")
+    @Email(message = "Email must be a valid format")
+    @NotBlank(message = "Email cannot be empty")
     private String email;
 
     public User() {
@@ -30,10 +30,11 @@ public class User {
     }
 
 
-    public User(Long id, @NotBlank(message = "El nombre no puede estar vacío") String name,
-            @Email(message = "El correo debe ser válido") @NotBlank(message = "El correo no puede estar vacío") @Email String email) {
+    public User(@NotBlank(message = "NIF cannot be empty") String nif,
+            @NotBlank(message = "Nombre cannot be empty") String name,
+            @Email(message = "Email must be a valid format") @NotBlank(message = "NIF cannot be empty") @Email String email) {
         super();
-        this.id = id;
+        this.nif = nif;
         this.name = name;
         this.email = email;
     }
