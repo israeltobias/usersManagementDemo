@@ -7,8 +7,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import es.users.dto.UserRequest;
-import es.users.dto.UserResponse;
 import es.users.entities.User;
+import es.users.records.UserResponse;
 import es.users.repositories.UserRepository;
 import es.users.services.interfaces.IUserService;
 import jakarta.transaction.Transactional;
@@ -30,11 +30,7 @@ public class UserService implements IUserService {
         List<User> users = userRepository.findAll();
         List<UserResponse> usersResponse = new ArrayList<>();
         users.forEach(item -> {
-            UserResponse userResponse = new UserResponse();
-            userResponse.setId(item.getId());
-            userResponse.setNif(item.getNif());
-            userResponse.setNombre(item.getName());
-            userResponse.setEmail(item.getEmail());
+            UserResponse userResponse = new UserResponse(item.getNif(), item.getName(), item.getEmail());
             usersResponse.add(userResponse);
         });
         return usersResponse;
@@ -48,24 +44,14 @@ public class UserService implements IUserService {
         user.setName(userRequest.getName());
         user.setNif(userRequest.getNif());
         User userSaved = userRepository.save(user);
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(userSaved.getId());
-        userResponse.setNif(userSaved.getNif());
-        userResponse.setNombre(userSaved.getName());
-        userResponse.setEmail(userSaved.getEmail());
-        return userResponse;
+        return new UserResponse(userSaved.getNif(), userSaved.getName(), userSaved.getEmail());
     }
 
 
     @Override
-    public Optional<UserResponse> getUserById(Long userId) {
-        return userRepository.findById(userId).map(user -> {
-            UserResponse userResponse = new UserResponse();
-            userResponse.setId(user.getId());
-            userResponse.setNif(user.getNif());
-            userResponse.setNombre(user.getName());
-            userResponse.setEmail(user.getEmail());
-            return userResponse;
+    public Optional<UserResponse> getUserByNif(String nif) {
+        return userRepository.findByNif(nif).map(user -> {
+            return new UserResponse(user.getNif(), user.getName(), user.getEmail());
         });
     }
 
@@ -73,16 +59,12 @@ public class UserService implements IUserService {
     @Override
     public Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest) {
         return userRepository.findByNif(nif).map(user -> {
-            UserResponse userResponse = new UserResponse();
-            user.setName(userRequest.getName());
-            user.setNif(userRequest.getNif());
-            user.setEmail(userRequest.getEmail());
-            User userSaved = userRepository.save(user);
-            userResponse.setId(userSaved.getId());
-            userResponse.setNif(userSaved.getNif());
-            userResponse.setNombre(userSaved.getName());
-            userResponse.setEmail(userSaved.getEmail());
-            return userResponse;
+            User userToSave = new User();
+            userToSave.setNif(userRequest.getNif());
+            userToSave.setName(userRequest.getName());
+            userToSave.setEmail(userRequest.getEmail());
+            User userSaved = userRepository.save(userToSave);
+            return new UserResponse(userSaved.getNif(), userSaved.getName(), userSaved.getEmail());
         });
     }
 

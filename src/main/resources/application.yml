@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: usersManagementDemo
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true  
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false 
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    url: /users.yaml
+
+# server:
+#   port: 8444

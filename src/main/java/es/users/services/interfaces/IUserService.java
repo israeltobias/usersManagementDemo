@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import es.users.dto.UserRequest;
-import es.users.dto.UserResponse;
+import es.users.records.UserResponse;
 
 public interface IUserService {
 
@@ -14,7 +14,7 @@ public interface IUserService {
     public UserResponse createUser(UserRequest user);
 
 
-    Optional<UserResponse> getUserById(Long userId);
+    Optional<UserResponse> getUserByNif(String userId);
 
 
     Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest);
