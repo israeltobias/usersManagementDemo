@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import es.users.dto.UserRequest;
@@ -38,7 +39,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    public UserResponse createUser(UserRequest userRequest) {
+    public UserResponse createUser(UserRequest userRequest) throws DataIntegrityViolationException {
         User user = new User();
         user.setEmail(userRequest.getEmail());
         user.setName(userRequest.getName());
@@ -57,9 +58,11 @@ public class UserService implements IUserService {
 
 
     @Override
-    public Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest) {
+    public Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest)
+            throws DataIntegrityViolationException {
         return userRepository.findByNif(nif).map(user -> {
             User userToSave = new User();
+            userToSave.setId(user.getId());
             userToSave.setNif(userRequest.getNif());
             userToSave.setName(userRequest.getName());
             userToSave.setEmail(userRequest.getEmail());

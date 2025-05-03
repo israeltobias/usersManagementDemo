@@ -2,6 +2,7 @@ package es.users.controllers;
 
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +36,12 @@ public class UserController implements UserApiDelegate {
         if (Utils.isInvalidAcceptHeader(request)) {
             return ResponseHandler.notAcceptableResponse();
         }
-        UserResponse userResponse = userService.createUser(userRequest);
-        return ResponseHandler.buildResponse("User created successfully!", HttpStatus.OK, userResponse);
+        try {
+            UserResponse userResponse = userService.createUser(userRequest);
+            return ResponseHandler.buildResponse("User created successfully!", HttpStatus.OK, userResponse);
+        } catch (DataIntegrityViolationException divex) {
+            return ResponseHandler.uniqueErrorResponse(divex, userRequest);
+        }
     }
 
 
@@ -59,10 +64,15 @@ public class UserController implements UserApiDelegate {
         if (Utils.isInvalidAcceptHeader(request)) {
             return ResponseHandler.notAcceptableResponse();
         }
-        Optional<UserResponse> userResponse = userService.updateUserNif(nif, userRequest);
-        return userResponse.map(usr -> ResponseHandler.buildResponse("User updated successfully", HttpStatus.OK, usr))
-                .orElseGet(() -> ResponseHandler.buildResponse("User not found: " + nif, HttpStatus.OK,
-                        new UserResponse(nif, "", "")));
+        try {
+            Optional<UserResponse> userResponse = userService.updateUserNif(nif, userRequest);
+            return userResponse
+                    .map(usr -> ResponseHandler.buildResponse("User updated successfully", HttpStatus.OK, usr))
+                    .orElseGet(() -> ResponseHandler.buildResponse("User not found: " + nif, HttpStatus.OK,
+                            new UserResponse(nif, "", "")));
+        } catch (DataIntegrityViolationException divex) {
+            return ResponseHandler.uniqueErrorResponse(divex, userRequest);
+        }
     }
 
 

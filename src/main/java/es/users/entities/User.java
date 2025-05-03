@@ -2,27 +2,38 @@ package es.users.entities;
 
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size; // Añadido para longitud
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = { @Index(name = "idx_nif", columnList = "nif"),
+        @Index(name = "idx_email", columnList = "email") })
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long   id;
     @NotBlank(message = "NIF cannot be empty")
+    @Size(max = 9, message = "NIF cannot exceed 9 characters")
+    @Column(name = "nif", unique = true, nullable = false, length = 9)
     private String nif;
-    @NotBlank(message = "nombre cannot be empty")
+    @NotBlank(message = "Name cannot be empty")
+    @Size(max = 50, message = "Name cannot exceed 50 characters")
+    @Column(name = "nombre", nullable = false, length = 50)
     private String name;
-    @Email(message = "Email must be a valid format")
     @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Email must be a valid format")
+    @Size(max = 100, message = "Email cannot exceed 100 characters")
+    @Column(name = "email", unique = true, nullable = false, length = 100)
     private String email;
 
     public User() {
@@ -30,39 +41,10 @@ public class User {
     }
 
 
-    public User(@NotBlank(message = "NIF cannot be empty") String nif,
-            @NotBlank(message = "Nombre cannot be empty") String name,
-            @Email(message = "Email must be a valid format") @NotBlank(message = "NIF cannot be empty") @Email String email) {
-        super();
+    public User(String nif, String name, String email) {
         this.nif = nif;
         this.name = name;
         this.email = email;
-    }
-
-
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", nif=" + nif + ", name=" + name + ", email=" + email + "]";
-    }
-
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(email, id, name, nif);
-    }
-
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        User other = (User) obj;
-        return Objects.equals(email, other.email) && Objects.equals(id, other.id) && Objects.equals(name, other.name)
-                && Objects.equals(nif, other.nif);
     }
 
 
@@ -103,5 +85,31 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof User user))
+            return false;
+        if (this.id == null || user.id == null) {
+            return false;
+        }
+        return Objects.equals(id, user.id);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id + ", nif='" + nif + '\'' + ", name='" + name + '\'' + ", email='" + email + '\''
+                + '}';
     }
 }
