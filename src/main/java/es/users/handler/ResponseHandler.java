@@ -5,38 +5,41 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import es.users.dto.UserRequest;
 import es.users.records.ApiResponse;
 import es.users.records.UserResponse;
+import es.users.util.DatabaseIdentifier;
 
+@Component
 public class ResponseHandler {
 
-    private static final DateTimeFormatter   FORMATTER      = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    private static final Map<String, String> CONSTRAINT_MAP = Map.of("(nif", "nif", "(email", "email");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private final DatabaseIdentifier       dbIdentifier;
 
-    private ResponseHandler() {
-        super();
+    public ResponseHandler(DatabaseIdentifier dbIdentifier) {
+        this.dbIdentifier = dbIdentifier;
     }
 
 
-    public static ResponseEntity<Object> buildResponse(String message, HttpStatus status, Object data) {
+    public ResponseEntity<Object> buildResponse(String message, HttpStatus status, Object data) {
         ApiResponse response = new ApiResponse(message, status.value(), LocalDateTime.now().format(FORMATTER), data);
         return ResponseEntity.status(status).body(response);
     }
 
 
-    public static ResponseEntity<Object> notAcceptableResponse() {
-        return ResponseHandler.buildResponse("Unsupported format: missing or incorrect Accept header",
-                HttpStatus.NOT_ACCEPTABLE, new UserResponse("", "", ""));
+    public ResponseEntity<Object> notAcceptableResponse() {
+        return buildResponse("Unsupported format: missing or incorrect Accept header", HttpStatus.NOT_ACCEPTABLE,
+                new UserResponse("", "", ""));
     }
 
 
-    public static ResponseEntity<Object> uniqueErrorResponse(DataIntegrityViolationException divex,
-            UserRequest userRequest) {
+    public ResponseEntity<Object> uniqueErrorResponse(DataIntegrityViolationException divex, UserRequest userRequest) {
         String constraintName = extractConstraintName(divex);
         String errorMessage = switch (constraintName) {
             case "nif" -> String.format("NIF %s is already registered", userRequest.getNif());
@@ -46,13 +49,14 @@ public class ResponseHandler {
         Map<String, Object> errorDetails = new LinkedHashMap<>();
         errorDetails.put("field", constraintName.toLowerCase());
         errorDetails.put("value", constraintName.equals("nif") ? userRequest.getNif() : userRequest.getEmail());
-        return ResponseHandler.buildResponse(errorMessage, HttpStatus.CONFLICT, errorDetails);
+        return buildResponse(errorMessage, HttpStatus.CONFLICT, errorDetails);
     }
 
 
-    private static String extractConstraintName(DataIntegrityViolationException divex) {
-        String message = divex.getLocalizedMessage().toLowerCase();
-        return CONSTRAINT_MAP.entrySet().stream().filter(entry -> message.contains(entry.getKey()))
+    private String extractConstraintName(DataIntegrityViolationException divex) {
+        ConstraintViolationException constraintViolationException = (ConstraintViolationException) divex.getCause();
+        String constrainName = constraintViolationException.getConstraintName().toLowerCase();
+        return dbIdentifier.getConstraintMap().entrySet().stream().filter(entry -> constrainName.equals(entry.getKey()))
                 .map(Map.Entry::getValue).findFirst().orElse("UNKNOWN_CONSTRAINT");
     }
 }

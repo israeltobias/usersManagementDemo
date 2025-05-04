@@ -18,20 +18,22 @@ public class UsersController implements UsersApiDelegate {
 
     private final HttpServletRequest request;
     private final UserService        userservice;
+    private final ResponseHandler    responseHandler;
 
-    public UsersController(HttpServletRequest request, UserService userservice) {
+    public UsersController(HttpServletRequest request, UserService userservice, ResponseHandler responseHandler) {
         super();
         this.request = request;
         this.userservice = userservice;
+        this.responseHandler = responseHandler;
     }
 
 
     @Override
     public ResponseEntity<Object> getUsers() {
         if (Utils.isInvalidAcceptHeader(request)) {
-            return ResponseHandler.notAcceptableResponse();
+            return responseHandler.notAcceptableResponse();
         }
         List<UserResponse> userResponse = userservice.getAll();
-        return ResponseHandler.buildResponse("Usuarios existentes", HttpStatus.OK, userResponse);
+        return responseHandler.buildResponse("Usuarios existentes", HttpStatus.OK, userResponse);
     }
 }
