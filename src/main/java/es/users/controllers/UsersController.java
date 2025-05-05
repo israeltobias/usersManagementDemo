@@ -10,7 +10,7 @@ import es.users.api.UsersApiDelegate;
 import es.users.handler.ResponseHandler;
 import es.users.records.UserResponse;
 import es.users.services.implementations.UserService;
-import es.users.util.Utils;
+import es.users.util.SupportedMediaTypes;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -30,7 +30,7 @@ public class UsersController implements UsersApiDelegate {
 
     @Override
     public ResponseEntity<Object> getUsers() {
-        if (Utils.isInvalidAcceptHeader(request)) {
+        if (SupportedMediaTypes.isInvalidAcceptHeader(request)) {
             return responseHandler.notAcceptableResponse();
         }
         List<UserResponse> userResponse = userservice.getAll();

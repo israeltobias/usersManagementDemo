@@ -1,6 +1,5 @@
 package es.users.services.implementations;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import es.users.dto.UserRequest;
 import es.users.entities.User;
+import es.users.mappers.UserMapper;
 import es.users.records.UserResponse;
 import es.users.repositories.UserRepository;
 import es.users.services.interfaces.IUserService;
@@ -29,21 +29,13 @@ public class UserService implements IUserService {
     @Override
     public List<UserResponse> getAll() {
         List<User> users = userRepository.findAll();
-        List<UserResponse> usersResponse = new ArrayList<>();
-        users.forEach(item -> {
-            UserResponse userResponse = new UserResponse(item.getNif(), item.getName(), item.getEmail());
-            usersResponse.add(userResponse);
-        });
-        return usersResponse;
+        return UserMapper.INSTANCE.listUserToListUserResponse(users);
     }
 
 
     @Override
     public UserResponse createUser(UserRequest userRequest) throws DataIntegrityViolationException {
-        User user = new User();
-        user.setEmail(userRequest.getEmail());
-        user.setName(userRequest.getName());
-        user.setNif(userRequest.getNif());
+        User user = UserMapper.INSTANCE.userRequestToUser(userRequest);
         User userSaved = userRepository.save(user);
         return new UserResponse(userSaved.getNif(), userSaved.getName(), userSaved.getEmail());
     }
@@ -51,9 +43,7 @@ public class UserService implements IUserService {
 
     @Override
     public Optional<UserResponse> getUserByNif(String nif) {
-        return userRepository.findByNif(nif).map(user -> {
-            return new UserResponse(user.getNif(), user.getName(), user.getEmail());
-        });
+        return userRepository.findByNif(nif).map(UserMapper.INSTANCE::userToUserResponse);
     }
 
 
@@ -61,13 +51,10 @@ public class UserService implements IUserService {
     public Optional<UserResponse> updateUserNif(String nif, UserRequest userRequest)
             throws DataIntegrityViolationException {
         return userRepository.findByNif(nif).map(user -> {
-            User userToSave = new User();
+            User userToSave = UserMapper.INSTANCE.userRequestToUser(userRequest);
             userToSave.setId(user.getId());
-            userToSave.setNif(userRequest.getNif());
-            userToSave.setName(userRequest.getName());
-            userToSave.setEmail(userRequest.getEmail());
-            User userSaved = userRepository.save(userToSave);
-            return new UserResponse(userSaved.getNif(), userSaved.getName(), userSaved.getEmail());
+            User usersaved = userRepository.save(userToSave);
+            return UserMapper.INSTANCE.userToUserResponse(usersaved);
         });
     }
 

@@ -8,9 +8,9 @@ import org.springframework.http.MediaType;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class Utils {
+public class SupportedMediaTypes {
 
-    private Utils() {
+    private SupportedMediaTypes() {
         super();
     }
 

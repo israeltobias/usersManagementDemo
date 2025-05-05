@@ -13,7 +13,7 @@ import es.users.dto.UserRequest;
 import es.users.handler.ResponseHandler;
 import es.users.records.UserResponse;
 import es.users.services.implementations.UserService;
-import es.users.util.Utils;
+import es.users.util.SupportedMediaTypes;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -35,7 +35,7 @@ public class UserController implements UserApiDelegate {
 
     @Override
     public ResponseEntity<Object> saveUser(@Valid @RequestBody UserRequest userRequest) {
-        if (Utils.isInvalidAcceptHeader(request)) {
+        if (SupportedMediaTypes.isInvalidAcceptHeader(request)) {
             return responseHandler.notAcceptableResponse();
         }
         UserRequestHolder.set(userRequest);
@@ -46,7 +46,7 @@ public class UserController implements UserApiDelegate {
 
     @Override
     public ResponseEntity<Object> getUserByNif(@PathVariable("userNif") String userNif) {
-        if (Utils.isInvalidAcceptHeader(request)) {
+        if (SupportedMediaTypes.isInvalidAcceptHeader(request)) {
             return responseHandler.notAcceptableResponse();
         }
         Optional<UserResponse> userResponse = userService.getUserByNif(userNif);
@@ -60,7 +60,7 @@ public class UserController implements UserApiDelegate {
     @Override
     public ResponseEntity<Object> updateUserByNif(@PathVariable("nif") String nif,
             @Valid @RequestBody UserRequest userRequest) {
-        if (Utils.isInvalidAcceptHeader(request)) {
+        if (SupportedMediaTypes.isInvalidAcceptHeader(request)) {
             return responseHandler.notAcceptableResponse();
         }
         UserRequestHolder.set(userRequest);
@@ -73,7 +73,7 @@ public class UserController implements UserApiDelegate {
 
     @Override
     public ResponseEntity<Object> deleteUserByNif(@PathVariable("nif") String nif) {
-        if (Utils.isInvalidAcceptHeader(request)) {
+        if (SupportedMediaTypes.isInvalidAcceptHeader(request)) {
             return responseHandler.notAcceptableResponse();
         }
         if (userService.deleteUserByNif(nif)) {
