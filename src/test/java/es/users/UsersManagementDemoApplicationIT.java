@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 @SpringBootTest
+@DisplayName("UsermanagementDemo class integration test")
 class UsersManagementDemoApplicationIT {
 
     @Test

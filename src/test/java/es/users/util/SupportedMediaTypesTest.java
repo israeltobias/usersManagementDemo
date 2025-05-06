@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("SupportedMediaTypes class test ")
 class SupportedMediaTypesTest {
 
     @Mock
