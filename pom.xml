@@ -92,11 +92,13 @@
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
 
+        <!-- for generating type-safe bean mappers -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
         </dependency>
+
 
     </dependencies>
 
@@ -150,6 +152,23 @@
                             <version>${org.mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+<!--                    <argLine>-->
+<!--                        -javaagent:${settings.localRepository}/org/mockito/mockito-inline/${mockito.version}/mockito-inline-${mockito.version}.jar</argLine>-->
                 </configuration>
             </plugin>
         </plugins>

@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 @SpringBootTest
-class UsersManagementDemoApplicationTests {
+class UsersManagementDemoApplicationIT {
 
     @Test
     @DisplayName("Context should load")
