@@ -22,7 +22,7 @@ public interface UserMapper {
     User userRequestToUser(UserRequest userRequest);
 
 
-    @Mapping(source = "name", target = "nombre")
+    @Mapping(source = "name", target = "name")
     @Mapping(source = "nif", target = "nif")
     @Mapping(source = "email", target = "email")
     UserResponse userToUserResponse(User user);
