@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,11 +34,10 @@ import es.users.util.DatabaseIdentifier;
 class ResponseHandlerTest {
 
     @Mock
-    private DatabaseIdentifier             dbIdentifier;
+    private DatabaseIdentifier dbIdentifier;
     @InjectMocks
-    private ResponseHandler                responseHandler;
-    private UserRequest                    userRequest;
-    private static final DateTimeFormatter TEST_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private ResponseHandler    responseHandler;
+    private UserRequest        userRequest;
 
     @BeforeEach
     void setUp() {

@@ -81,7 +81,7 @@ class UserRequestHolderTest {
 
 
     @Test
-    @DisplayName("")
+    @DisplayName("Should overwrite previous request")
     void should_OverwritePreviousRequest() {
         UserRequestHolder.set(userRequest1);
         UserRequestHolder.set(userRequest2);

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import es.users.dto.UserRequest;
 import es.users.handler.ResponseHandler;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("GlobalExceptionHandler class test")
 class GlobalExceptionHandlerTest {
 
     @Mock
@@ -52,6 +54,7 @@ class GlobalExceptionHandlerTest {
 
 
     @Test
+    @DisplayName("Handler dataintegrityviolationexception should call responsehandler and clear holder")
     void handlerDataIntegrityViolationException_shouldCallResponseHandlerAndClearHolder() {
         mockedUserRequestHolder.when(UserRequestHolder::get).thenReturn(mockUserRequest);
         ResponseEntity<Object> expectedResponseEntity = ResponseEntity.status(HttpStatus.CONFLICT)
@@ -69,6 +72,7 @@ class GlobalExceptionHandlerTest {
 
 
     @Test
+    @DisplayName("handler dataintegrityviolationexception when userrequestholder returns null should pass null to responsehandler")
     void handlerDataIntegrityViolationException_whenUserRequestHolderReturnsNull_shouldPassNullToResponseHandler() {
         mockedUserRequestHolder.when(UserRequestHolder::get).thenReturn(null);
         ResponseEntity<Object> expectedResponseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
